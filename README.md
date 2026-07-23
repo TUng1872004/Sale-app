@@ -67,7 +67,10 @@ Layered architecture with UI ---> API (Protocol with backend) -----> service (co
 Read [report](./report/main.pdf) page 4 for further details
 
 ## Test case
-42 test cases all passes with warning of a deprecated function in the pytest library
+42 test cases all passes with warning of a deprecated function in the pytest library. Primary feature Kanban progress view:
+
+<img src="report/img/work_progress.png" width="100%" alt="Session start and identity firewall">
+
 Read [testcase.md](./src/tests/TEST_CASES.md) for further details
 ## Setup and implementation
 ### Installation
