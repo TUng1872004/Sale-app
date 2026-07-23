@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Nhân sự · Sales HQ{% endblock %}
+{% block content %}
+<div class="page-title"><div><p class="eyebrow">People & territory</p><h1>Nhân sự</h1></div><span class="pill">{{ sales.total }} hồ sơ</span></div>
+{% if user.role.value == 'DIRECTOR' %}
+<details class="panel"><summary>Tạo nhân sự</summary><form method="post" action="/sales" class="form-grid"><label>Tên<input name="name" required></label><label>Email<input name="email" type="email" required></label><label>Mật khẩu<input name="password" required></label><label>Vai trò<select name="role">{% for role in roles %}<option>{{ role.value }}</option>{% endfor %}</select></label><label>Vùng<input name="region" required></label><label>Manager<select name="mgr_id"><option value="">Không có</option>{% for manager in managers %}<option value="{{ manager.id }}">{{ manager.name }}</option>{% endfor %}</select></label><label>Điện thoại<input name="phone"></label><button>Tạo Sale</button></form></details>
+{% endif %}
+<section class="cards">
+{% for sale in sales.items %}
+<article class="person-card" x-data="{edit:false,kick:false,ready:false,t:null,beginHold(){this.ready=false;this.t=setTimeout(()=>this.ready=true,3000)},cancelHold(){clearTimeout(this.t);this.ready=false}}">
+  <div class="row-between"><div><h2><a href="/sales/{{ sale.id }}">{{ sale.name }}</a></h2><p>{{ sale.email }}</p></div><span class="badge {{ sale.status.value | lower }}">{{ sale.status.value }}</span></div>
+  <dl><div><dt>Role</dt><dd>{{ sale.role.value }}</dd></div><div><dt>Region</dt><dd>{{ sale.region }}</dd></div><div><dt>Position</dt><dd>{{ sale.position | join(', ') if sale.position else 'Chưa thiết lập' }}</dd></div></dl>
+  {% if sale.role.value == 'SALER' and user.role.value in ['MANAGER','DIRECTOR'] %}<button class="ghost" @click="edit=!edit">Sửa Position</button><form x-show="edit" method="post" action="/sales/{{ sale.id }}/position" class="inline-form"><input name="countries" value="{{ sale.position | join(', ') }}" placeholder="Vietnam, Singapore"><button>Lưu</button></form>{% endif %}
+  {% if sale.role.value == 'SALER' and user.role.value == 'MANAGER' %}<button class="danger ghost" type="button" @click="kick=true">Đề xuất nghỉ việc</button>{% endif %}
+  {% if sale.role.value == 'SALER' and user.role.value == 'DIRECTOR' and sale.status.value == 'ACTIVE' %}<button class="danger ghost" type="button" @click="kick=true">Dismiss</button>{% endif %}
+  {% if sale.role.value == 'SALER' and user.role.value in ['MANAGER','DIRECTOR'] %}
+  <div class="modal-backdrop" x-show="kick" x-transition.opacity @keydown.escape.window="kick=false;cancelHold()" x-cloak>
+    <section class="modal-panel" @click.outside="kick=false;cancelHold()">
+      <div class="row-between"><div><p class="eyebrow">{{ 'Director action' if user.role.value == 'DIRECTOR' else 'Manager proposal' }}</p><h2>{{ 'Dismiss ' if user.role.value == 'DIRECTOR' else 'Đề xuất nghỉ việc ' }}{{ sale.name }}</h2></div><button class="icon-button" type="button" @click="kick=false;cancelHold()" aria-label="Đóng">×</button></div>
+      <form method="post" action="/sales/{{ sale.id }}/kick{{ '' if user.role.value == 'DIRECTOR' else '/propose' }}" class="stack" @submit="if(!ready){$event.preventDefault()}">
+        <textarea name="summary" required placeholder="Lý do dismiss và bàn giao"></textarea>
+        {% if user.role.value == 'MANAGER' %}<select name="seriousness"><option>HIGH</option><option>CRITICAL</option><option>MED</option></select>{% endif %}
+        <button class="danger hold-button" :class="{'is-loading': t && !ready, 'is-ready': ready}" :aria-disabled="!ready" @mouseenter="beginHold()" @mouseleave="cancelHold()" @focus="beginHold()" @blur="cancelHold()"><span x-text="ready ? '{{ 'Xác nhận dismiss' if user.role.value == 'DIRECTOR' else 'Gửi Director' }}' : 'Giữ chuột 3 giây'"></span></button>
+      </form>
+    </section>
+  </div>
+  {% endif %}
+</article>
+{% endfor %}
+</section>
+{% endblock %}

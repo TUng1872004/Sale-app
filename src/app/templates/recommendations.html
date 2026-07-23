@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Gợi ý Saler · Sales HQ{% endblock %}
+{% block content %}
+<div class="page-title"><div><p class="eyebrow">Benchmark-selected deterministic model</p><h1>Gợi ý cho {{ deal.title }}</h1></div><a class="button ghost" href="/opportunities">Quay lại</a></div>
+<section class="rank-list" x-data="{all:false}">{% for item in ranked %}<article x-show="all || {{ loop.index }} <= 3" class="rank-card"><div class="rank">{{ loop.index }}</div><div><div class="row-between"><h2>{{ names.get(item.saler_id, item.saler_id) }}</h2>{% if item.position_match %}<span class="badge match">Position match</span>{% endif %}</div><strong class="score">{{ "{:.3f}".format(item.score) }}</strong><ul>{% for factor in item.factors %}<li>{{ factor }}</li>{% endfor %}</ul></div></article>{% endfor %}<button x-show="!all && {{ ranked | length }} > 3" @click="all=true" class="ghost">Hiện top 5</button></section>
+{% endblock %}

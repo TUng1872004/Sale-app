@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ agency.name }} · Sales HQ{% endblock %}
+{% block content %}
+<div class="page-title"><div><p class="eyebrow">Agency detail</p><h1>{{ agency.name }}</h1><p>{{ agency.code }} · Owner: {{ owner.name if owner else 'HQ pool' }}</p></div><a class="button ghost" href="/agencies">Quay lại</a></div>
+<section class="panel"><form method="post" action="/agencies/{{ agency.id }}/update" class="form-grid"><label>Tên<input name="name" value="{{ agency.name }}" required></label><label>Ngành<input name="sector" value="{{ agency.sector or '' }}"></label><label>Quốc gia<input name="loc" value="{{ agency.loc or '' }}"></label>{% if user.role.value in ['MANAGER','DIRECTOR'] %}<button>Lưu Agency</button>{% endif %}</form></section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Agency · Sales HQ{% endblock %}
+{% block content %}
+<div class="page-title"><div><p class="eyebrow">Account ownership</p><h1>Agency</h1></div><span class="pill">{{ agencies.total }} tài khoản</span></div>
+<form class="search" method="get"><input name="q" value="{{ q }}" placeholder="Tìm theo tên"><button>Tìm</button></form>
+{% if user.role.value == 'DIRECTOR' %}<details class="panel"><summary>Tạo Agency</summary><form method="post" action="/agencies" class="form-grid"><label>Mã<input name="code" required></label><label>Tên<input name="name" required></label><label>Ngành<input name="sector"></label><label>Quốc gia<input name="loc"></label><button>Tạo trong HQ pool</button></form></details>{% endif %}
+<div class="table-wrap panel"><table><thead><tr><th>Agency</th><th>Ngành</th><th>Quốc gia</th><th>Owner</th><th>Phân công</th></tr></thead><tbody>
+{% for agency in agencies.items %}<tr>
+  <td><strong><a href="/agencies/{{ agency.id }}">{{ agency.name }}</a></strong><br><small>{{ agency.code }}</small></td><td>{{ agency.sector or '—' }}</td><td>{{ agency.loc or '—' }}</td><td>{{ owner_names.get(agency.owner_id, 'HQ pool') }}</td>
+  <td>{% if candidates %}<form method="post" action="/agencies/{{ agency.id }}/assign" class="inline-form"><select name="owner_id">{% for sale in candidates %}<option value="{{ sale.id }}">{{ sale.name }}</option>{% endfor %}</select><input name="reason" placeholder="Lý do"><button>Giao</button></form>{% else %}—{% endif %}</td>
+</tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Tổng quan · Sales HQ{% endblock %}
+{% block head %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+<div class="page-title"><div><p class="eyebrow">{{ user.role.value }} workspace</p><h1>Tổng quan kinh doanh</h1></div><span class="pill">Dữ liệu đúng phạm vi</span></div>
+<section class="kpi-grid">
+  <article><span>Pipeline mở</span><strong>${{ "{:,.0f}".format(kpis.pipeline_value) }}</strong></article>
+  <article><span>Doanh thu thắng</span><strong>${{ "{:,.0f}".format(kpis.won_revenue) }}</strong></article>
+  <article><span>Tỷ lệ thắng</span><strong>{{ "{:.1%}".format(kpis.win_rate) if kpis.win_rate is not none else "—" }}</strong></article>
+  <article><span>Cơ hội chậm</span><strong>{{ kpis.stale_oppo_count }}</strong></article>
+  {% if user.role.value == 'DIRECTOR' %}<article><span>Agency HQ pool</span><strong>{{ kpis.unassigned_agency_count }}</strong></article>{% endif %}
+</section>
+<section class="two-col">
+  <article class="panel"><div class="panel-head"><h2>Doanh thu theo tháng</h2><span>EMA 3 tháng</span></div><canvas id="revenueChart"></canvas></article>
+  <article class="panel"><div class="panel-head"><h2>Pipeline funnel</h2><span>Tất cả stage</span></div><canvas id="stageChart"></canvas></article>
+</section>
+<section class="two-col">
+  <article class="panel"><h2>Lý do thua</h2>{% if losses %}<div class="bars">{% for row in losses %}<div><span>{{ row.reason.value }}</span><strong>{{ row.count }}</strong></div>{% endfor %}</div>{% else %}<p class="empty">Chưa có cơ hội thua trong phạm vi.</p>{% endif %}</article>
+  {% if workload %}<article class="panel"><h2>Workload Saler</h2><div class="table-wrap"><table><thead><tr><th>Saler</th><th>Agency</th><th>Mở</th><th>Pipeline</th><th>Chậm</th></tr></thead><tbody>{% for row in workload %}<tr><td>{{ row.sale_name }}</td><td>{{ row.agency_count }}</td><td>{{ row.open_oppo_count }}</td><td>${{ "{:,.0f}".format(row.open_pipeline_value) }}</td><td>{{ row.stale_oppo_count }}</td></tr>{% endfor %}</tbody></table></div></article>{% endif %}
+</section>
+{% if rankings %}<section class="panel"><div class="panel-head"><h2>Xếp hạng đội · {{ rankings[0].latest_month }}</h2><span>So với EMA 3 tháng trước</span></div><div class="table-wrap"><table><thead><tr><th>#</th><th>Manager</th><th>Revenue</th><th>EMA trước</th><th>Chênh lệch</th></tr></thead><tbody>{% for row in rankings %}<tr><td>{{ loop.index }}</td><td><a href="/teams/{{ row.manager_id }}">{{ row.manager_name }}</a></td><td>${{ "{:,.0f}".format(row.revenue) }}</td><td>${{ "{:,.0f}".format(row.prior_ema) }}</td><td>{{ '+' if row.delta >= 0 else '' }}${{ "{:,.0f}".format(row.delta) }}</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+<script>
+const months = {{ months | map(attribute='month') | list | tojson }};
+const revenue = {{ months | map(attribute='revenue') | list | tojson }};
+const ema = {{ months | map(attribute='ema') | list | tojson }};
+new Chart(document.getElementById('revenueChart'), {type:'bar',data:{labels:months,datasets:[{label:'Revenue',data:revenue,backgroundColor:'#e4572e'},{label:'EMA trước tháng',data:ema,type:'line',borderColor:'#183153',tension:.35}]},options:{responsive:true}});
+new Chart(document.getElementById('stageChart'), {type:'doughnut',data:{labels:{{ stages | map(attribute='stage') | map(attribute='value') | list | tojson }},datasets:[{data:{{ stages | map(attribute='count') | list | tojson }},backgroundColor:['#bfd7ea','#6fb1a0','#f2ca52','#e99b54','#65a765','#c95d63']}]},options:{responsive:true}});
+</script>
+{% endblock %}

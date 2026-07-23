@@ -1,0 +1,16 @@
+*_cache
+__pycache__/
+*.py[cod]
+.venv
+.vscode
+sales.db
+
+*.md
+
+!README.md
+!AI_USAGE.md
+!CLAUDE.md
+!src/tests/TEST_CASES.md
+*.docx
+alembic.ini
+uv.lock

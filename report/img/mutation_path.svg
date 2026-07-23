@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#f8fafc"/></marker><marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#86efac"/></marker><marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#f87171"/></marker><style>.t{font-family:'Segoe Print','Comic Sans MS',cursive;fill:#f8fafc}.box{fill:#171717;stroke:#f8fafc;stroke-width:4}.p{fill:#171717;stroke:#c084fc;stroke-width:4}.line{stroke:#f8fafc;stroke-width:5;fill:none;marker-end:url(#a)}.ok{stroke:#86efac;stroke-width:5;fill:none;marker-end:url(#g)}.bad{stroke:#f87171;stroke-width:5;stroke-dasharray:13 11;fill:none;marker-end:url(#r)}</style></defs>
+  <rect width="1600" height="900" fill="#101113"/><text x="800" y="85" text-anchor="middle" class="t" font-size="52">Guarded mutation path</text>
+  <g text-anchor="middle"><rect class="p" x="55" y="210" width="230" height="180" rx="24"/><text class="t" x="170" y="275" font-size="30">Form</text><text class="t" x="170" y="325" font-size="24">submit action</text>
+  <rect class="box" x="360" y="210" width="230" height="180" rx="24"/><text class="t" x="475" y="275" font-size="30">FastAPI API</text><text class="t" x="475" y="325" font-size="24">parse request</text>
+  <rect class="p" x="665" y="210" width="230" height="180" rx="24"/><text class="t" x="780" y="270" font-size="30">Pydantic</text><text class="t" x="780" y="315" font-size="30">validation</text>
+  <rect class="box" x="970" y="210" width="230" height="180" rx="24"/><text class="t" x="1085" y="270" font-size="30">Domain rule</text><text class="t" x="1085" y="325" font-size="24">Ok / Err</text>
+  <rect class="p" x="1275" y="210" width="230" height="180" rx="24"/><text class="t" x="1390" y="270" font-size="30">SQLModel</text><text class="t" x="1390" y="315" font-size="30">transaction</text></g>
+  <path class="line" d="M285 300H360"/><path class="line" d="M590 300H665"/><path class="line" d="M895 300H970"/><path class="ok" d="M1200 300H1275"/><text class="t" x="1235" y="275" fill="#86efac" font-size="26">Ok</text>
+  <path class="bad" d="M780 390V495H170V390"/><text class="t" x="475" y="475" fill="#f87171" font-size="28">422 field errors</text>
+  <path class="bad" d="M1085 390V610H170V390"/><text class="t" x="610" y="590" fill="#f87171" font-size="28">Err(code, message)</text>
+  <path class="ok" d="M1390 390V735H170V390"/><text class="t" x="780" y="720" fill="#86efac" font-size="28">re-rendered response</text>
+  <text class="t" x="800" y="840" text-anchor="middle" font-size="21" fill="#94a3b8">solid = call path   •   green = committed response   •   dashed red = validation rejection</text>
+</svg>

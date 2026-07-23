@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ target.name }} · Sales HQ{% endblock %}
+{% block content %}
+<div class="page-title"><div><p class="eyebrow">Sale detail</p><h1>{{ target.name }}</h1><p>{{ target.email }} · {{ target.role.value }} · {{ target.status.value }}</p></div><a class="button ghost" href="/sales">Quay lại</a></div>
+<section class="panel"><dl><div><dt>Region</dt><dd>{{ target.region }}</dd></div><div><dt>Phone</dt><dd>{{ target.phone or '—' }}</dd></div><div><dt>Position</dt><dd>{{ target.position | join(', ') if target.position else '—' }}</dd></div></dl>{% if user.role.value in ['MANAGER','DIRECTOR'] %}<form method="post" action="/sales/{{ target.id }}/update" class="form-grid"><label>Tên<input name="name" value="{{ target.name }}" required></label><label>Region<input name="region" value="{{ target.region }}" required></label><label>Phone<input name="phone" value="{{ target.phone or '' }}"></label><button>Lưu hồ sơ</button></form>{% endif %}</section>
+{% endblock %}

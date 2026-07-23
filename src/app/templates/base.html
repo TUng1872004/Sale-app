@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Sales Management{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/app.css') }}">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  {% if user %}
+  <header class="topbar">
+    <a class="brand" href="/dashboard">Sales HQ</a>
+    <nav>
+      <a href="/dashboard">Tổng quan</a>
+      <a href="/sales">Nhân sự</a>
+      <a href="/agencies">Agency</a>
+      <a href="/opportunities">Opportunity</a>
+      <a href="/logs">Nhật ký</a>
+    </nav>
+    <div class="identity"><span>{{ user.name }} · {{ user.role.value }}</span><form action="/logout" method="post"><button class="ghost">Đăng xuất</button></form></div>
+  </header>
+  {% endif %}
+  <main class="shell">
+    {% if flash %}<div class="flash {{ flash.kind }}">{{ flash.message }}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
