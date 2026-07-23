@@ -22,8 +22,6 @@ A popular dataset for real sales data, already organized into 4 different schema
 - Login as Salers, Managers, Director 
 
 ### Director
-From now on remove Gemini narrative the data is direct enough. Instead
-
 #### Management tab: 
 - View the overall revenue chart in months at the beginning
 - View logs of managers, with lookup (another table manager_logs). Logged actions includes team revenue changes, reports of managers. Click to show full report in shared MiniO space (for demo)
@@ -32,7 +30,7 @@ From now on remove Gemini narrative the data is direct enough. Instead
 - Kick salers directly (that open a documents writing reasons), when the mouse hover into kick it takes 3 second to fully load red only that can it be kicked (delayed confirm)
 #### Business tab
 - CRUD with Oppoturnity, along with assign buttons where you can tick all oppoturnity then click assign to a specific team
-- Recommendation engines using linear regressions (or alternative, we dig in that later) that recommend oppo to salers based on: victory rate in general - victory rate in that fields, victory rate of the team in that field, revenue in that field, average time per victory (all normalized dynamically, algorithm need discussion). Finally rerank via Position (first-order criteria any position that doesnt match get pushed below the match one). UI need clever adjustment too
+- Recommendation engines using GLM to predict win rate in [0,1] that recommend oppo to salers based on: victory rate in general - victory rate in that fields, victory rate of the team in that field, revenue in that field, average time per victory (all normalized dynamically, algorithm need discussion). Finally rerank via Position (first-order criteria any position that doesnt match get pushed below the match one). 
 
 ### Manager
 #### Management tab: 
