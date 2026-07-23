@@ -10,6 +10,7 @@
   <article><span>Cơ hội chậm</span><strong>{{ kpis.stale_oppo_count }}</strong></article>
   {% if user.role.value == 'DIRECTOR' %}<article><span>Agency HQ pool</span><strong>{{ kpis.unassigned_agency_count }}</strong></article>{% endif %}
 </section>
+{% include "_kanban.html" %}
 <section class="two-col">
   <article class="panel"><div class="panel-head"><h2>Doanh thu theo tháng</h2><span>EMA 3 tháng</span></div><canvas id="revenueChart"></canvas></article>
   <article class="panel"><div class="panel-head"><h2>Pipeline funnel</h2><span>Tất cả stage</span></div><canvas id="stageChart"></canvas></article>

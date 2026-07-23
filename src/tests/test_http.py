@@ -76,6 +76,41 @@ def test_login_role_landing_and_cross_scope_denial(web: tuple[TestClient, object
     assert response.status_code == 404
 
 
+def test_manager_overview_and_director_team_detail_show_scoped_kanban(
+    web: tuple[TestClient, object, MemoryStorage],
+):
+    client, db_engine, _ = web
+    with Session(db_engine) as session:  # type: ignore[arg-type]
+        session.add(
+            Oppo(
+                id="outside-deal",
+                title="Outside pipeline",
+                prod="Cloud",
+                agency_id="agency",
+                owner_id="outsider",
+                value=900,
+                stage=Stage.PROPOSE,
+                open_at=datetime(2026, 1, 3),
+            )
+        )
+        session.commit()
+    _login(client, "manager@test.local")
+    manager_dashboard = client.get("/dashboard")
+    assert "Kanban tiến độ Saler" in manager_dashboard.text
+    assert "Renewal" in manager_dashboard.text
+    assert "Team pool" in manager_dashboard.text
+    assert "Outside pipeline" not in manager_dashboard.text
+    assert manager_dashboard.text.count('class="kanban-column"') == 4
+
+    _login(client, "director@test.local")
+    assert "Kanban tiến độ Saler" not in client.get("/dashboard").text
+    team = client.get("/teams/manager")
+    assert "Kanban tiến độ Saler" in team.text
+    assert "Renewal" in team.text
+    assert "Team pool" in team.text
+    assert "Outside pipeline" not in team.text
+
+
 def test_director_compliance_flow_and_reassign_required(web: tuple[TestClient, object, MemoryStorage]):
     client, db_engine, _ = web
     _login(client, "director@test.local")

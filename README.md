@@ -1,6 +1,10 @@
 # Sales App
+An app managing sale teams workflows, documents and staffs following procedure:
+<img src="report/img/mandatory_flow.png" width="100%" alt="Session start and identity firewall">
 
-Sale → Đại lý → Cơ hội bán hàng demo. Backend: FastAPI + SQLModel + SQLite, managed with `uv`.
+Frontend: Jjinra with Js scripts
+
+Backend: FastAPI + SQLModel + SQLite, managed with `uv`.
 
 **Current state:** the server-rendered application, scoped repositories, seed/ETL, dashboards,
 MinIO report workflows, tests, and benchmark-selected recommendation engine are implemented.
@@ -46,16 +50,25 @@ From now on remove Gemini narrative the data is direct enough. Instead
 ## Database
 ### MiniO
 For demo only safety reasons and others are temporarily ignored:
+```
 team_{Managers_name}/
    |------- manager_rep
    |------- saler_{name}
+   ```
 ### SQL
-Read [report](./report/main.pdf) page 7
-## System arch
-Read [report](./report/main.pdf) page 4
+4 original schema with 3 logging table for action logs and for reports tracking, job status
+
+<img src="report/img/db.png" width="100%" alt="Session start and identity firewall">
+Read [report](./report/main.pdf) page 7 for further details
 
 ## System arch
-Read [testcase.md](./src/tests/TEST_CASES.md) 
+Layered architecture with UI ---> API (Protocol with backend) -----> service (completed request via orchestration of logical submodules) ----> domain (sale domain logical submodules) -----> Data Modelling -----> DB Infra (SQL, MiniO)
+<img src="report/img/arch.png" width="100%" alt="Session start and identity firewall">
+Read [report](./report/main.pdf) page 4 for further details
+
+## Test case
+42 test cases all passes with warning of a deprecated function in the pytest library
+Read [testcase.md](./src/tests/TEST_CASES.md) for further details
 ## Setup and implementation
 ### Installation
 

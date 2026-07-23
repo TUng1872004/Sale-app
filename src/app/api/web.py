@@ -38,6 +38,7 @@ from app.services import (
     sale_offboarding,
     stage_transition,
 )
+from app.services.overview import team_kanban
 from app.storage import Storage, get_storage
 
 
@@ -111,6 +112,7 @@ def dashboard(
     months = monthly_revenue(session, scope)
     workload = rep_workload(session, scope) if user.role != Role.SALER else []
     rankings = team_rankings(session, scope) if user.role != Role.SALER else []
+    kanban = team_kanban(session, scope) if user.role == Role.MANAGER else None
     return templates.TemplateResponse(
         request=request,
         name="dashboard.html",
@@ -123,6 +125,7 @@ def dashboard(
             months=months,
             workload=workload,
             rankings=rankings,
+            kanban=kanban,
         ),
     )
 
@@ -182,6 +185,7 @@ def team_detail(
             stages=stage_summaries(session, team_scope),
             months=monthly_revenue(session, team_scope),
             workload=rep_workload(session, team_scope),
+            kanban=team_kanban(session, team_scope),
         ),
     )
 

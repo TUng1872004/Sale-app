@@ -1,0 +1,23 @@
+{% if kanban %}
+<section class="panel kanban-panel" aria-label="Kanban tiến độ Saler">
+  <div class="panel-head"><div><h2>Kanban tiến độ Saler</h2><p class="muted">Opportunity đang mở · {{ kanban.total }} mục</p></div><a href="/opportunities" class="button ghost">Mở pipeline</a></div>
+  <div class="kanban-board">
+    {% for column in kanban.columns %}
+    <section class="kanban-column" data-stage="{{ column.stage.value }}">
+      <header><span class="stage {{ column.stage.value | lower }}">{{ column.stage.value }}</span><strong>{{ column.cards | length }}</strong></header>
+      <div class="kanban-cards">
+        {% for card in column.cards %}
+        <article class="kanban-card">
+          <a href="/opportunities/{{ card.id }}">{{ card.title }}</a>
+          <span>{{ card.owner_name }}</span>
+          <strong>${{ "{:,.0f}".format(card.value) }}</strong>
+          {% if card.due_at %}<small>Due {{ card.due_at.strftime('%d/%m/%Y') }}</small>{% endif %}
+        </article>
+        {% else %}<p class="kanban-empty">Không có</p>{% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+  {% if kanban.shown < kanban.total %}<p class="muted">Đang hiển thị {{ kanban.shown }}/{{ kanban.total }} mục gần nhất.</p>{% endif %}
+</section>
+{% endif %}

@@ -150,6 +150,7 @@ are implemented as domain functions, rather than relying on a UI to hide prohibi
     \item Maintain Agencies and record the Sale currently responsible for each Agency.
     \item Create, update, assign, and delete opportunities linked to exactly one Agency and one owner.
     \item Move opportunities through an explicit, validated sales pipeline.
+    \item View open opportunities as a four-stage Kanban board scoped to the current team.
     \item Reassign an Agency while preserving ownership history and revenue attribution for
         closed opportunities.
     \item Calculate pipeline value, won revenue, win rate, stage distribution, loss reasons,
@@ -173,6 +174,7 @@ other generated narrative is required.
         each log can open its full report document from shared MinIO storage for this demo.
     \item View best and worst teams for a selected month, ordered against the standard EMA.
     \item Drill into a team to view its revenue chart, Saler contribution, and progress.
+    \item View that team's scoped Opportunity Kanban after opening its team page.
     \item Deactivate a Saler directly after recording a reason document. The destructive action
         uses a three-second hover-to-arm confirmation that turns red only when ready.
 \end{itemize}
@@ -193,6 +195,7 @@ other generated narrative is required.
 \begin{itemize}
     \item View the team's monthly revenue chart, best and worst performers, and comparison
         with the standard EMA.
+    \item View the team's open pipeline as a Kanban board on the dashboard.
     \item View searchable \texttt{salers\_logs}, including revenue changes, reports, and
         requests. Each record can open its full report document from shared MinIO storage.
     \item Propose, rather than execute, a Saler offboarding action. The same three-second
@@ -263,7 +266,7 @@ changing the existing code, or adding any methods.
 \subsection{Module and submodule mapping}
 
 Table \ref{tab:diagram-modules} follows Figure \ref{fig:architecture}, with
-\texttt{core/} added as a peer source module. The diagram groups the three management files
+\texttt{core/} added as a peer source module. The diagram groups the four management files
 into one \textit{management services} box; the table expands that box to its source files.
 
 \small
@@ -303,6 +306,8 @@ Controller / Service & Run API workflows. & management services & \path{app/serv
 Controller / Service & Run API workflows. & management services & \path{app/services/agency_management.py} & Manage Agencies. \\
 \midrule
 Controller / Service & Run API workflows. & management services & \path{app/services/opportunity_management.py} & Create, update, and delete Opportunities. \\
+\midrule
+Controller / Service & Run API workflows. & management services & \path{app/services/overview.py} & Build scoped Kanban views. \\
 \midrule
 Controller / Service & Run API workflows. & rec.service & \path{app/rec/service.py} & Rank Saler candidates. \\
 \midrule
@@ -531,10 +536,10 @@ opportunity-priority pipeline in \texttt{rec/registry.py}.
 \section{Testing}
 % ============================================================
 
-The suite contains 42 representative \texttt{pytest} cases, all passing at the time of
+The suite contains 43 representative \texttt{pytest} cases, all passing at the time of
 writing. It selects the decision boundaries and end-to-end flows that demonstrate each
 delivery phase, rather than repeating every equivalent input permutation. The parameterised
-Lost-stage test accounts for four of the 42 cases.
+Lost-stage test accounts for four of the 43 cases.
 
 \small
 \begin{longtable}{@{}p{0.12\textwidth}p{0.18\textwidth}p{0.55\textwidth}p{0.07\textwidth}@{}}
@@ -559,6 +564,8 @@ Phase 2: data and ETL & \texttt{test\_repo.py} & Scoped list pagination, team me
 \hline
 Phase 2: data and ETL & \texttt{test\_seed.py} & Deterministic agency-owner tie-break; initial seed, idempotent verification, reseed, and required Saler Position data. & 2 \\
 \hline
+Phase 2: dashboard & \texttt{test\_http.py} & Manager dashboard shows four scoped open-stage Kanban columns; Director team drill-down shows the selected team while excluding other teams. & 1 \\
+\hline
 Phase 3: workflows and HTTP & \shortstack{\texttt{test\_storage}\\\texttt{\_workflow.py}} & Upload/transaction compensation: SQL failure removes the uploaded document; upload failure makes no SQL write. & 2 \\
 \hline
 Phase 3: workflows and HTTP & \texttt{test\_http.py} & Login redirect and scope denial; Director CRUD, bulk assignment, history-protecting deletion, and offboarding guard; stage report and log; team-pool request/approval; dismissal reason and manager report storage. & 7 \\
@@ -569,7 +576,7 @@ Phase 4: recommendation & \texttt{test\_registry.py} & Won/Lost opportunities re
 \hline
 Phase 4: recommendation & \shortstack{\texttt{test\_rec}\\\texttt{\_service.py}} & Invalid or incompatible benchmark artifact falls back to the deterministic recommender. & 1 \\
 \hline
-\textbf{Total} & & & \textbf{42} \\
+\textbf{Total} & & & \textbf{43} \\
 \hline
 \end{longtable}
 \normalsize
@@ -638,6 +645,7 @@ HTTP routes (\texttt{app/api/}) & Done \\
 Auth (\texttt{app/auth/}) & Done \\
 Templates / UI (\texttt{app/templates/}) & Done \\
 Opportunity CRUD and bulk assignment & Done, HTTP-tested \\
+Scoped Manager/team Kanban & Done, HTTP-tested \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -662,6 +670,12 @@ server-rendered FastAPI interface. Routes receive the current user, database ses
 storage facade through dependency injection; write routes delegate to application services,
 while read views use the shared repositories and dashboard statistics.
 
+The Manager dashboard also presents the team's open pipeline as four Kanban columns:
+\texttt{NEW}, \texttt{QUALIFY}, \texttt{PROPOSE}, and \texttt{NEGOTIATE}. Each card shows the
+Opportunity, responsible Saler, value, and due date. A Director reaches the same scoped view by
+opening \path{/teams/{manager_id}}; the service receives only that team's owner IDs, preventing
+cards from another team from entering the board.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{img/dic_overview.png}
@@ -683,12 +697,20 @@ while read views use the shared repositories and dashboard statistics.
     \caption{Director Revenue Log.}
     \label{fig:dict-log}
 \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/work_progress.png}
+    \caption{Progress of Sales displayed in Kanban view.}
+    \label{fig:work-progress}
+\end{figure}
 % ============================================================
 \subsection{Limitations and future work}
 % ============================================================
 The following are the main points that need to be improved in the future:
 \begin{itemize}
     \item No full browser end-to-end records yet, only technical documentation.
+    \item No profile names are just meaningless string, cannot be clicked.
     \item No duplicate-detection semantics at the domain layer. A Director can hard-delete an
         open Opportunity without audit history; once history exists, deletion marks it
         \texttt{CLOSED} instead, preserving evidence.

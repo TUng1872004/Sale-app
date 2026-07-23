@@ -16,7 +16,7 @@ AI created consolidated v3 plan, implemented the FastAPI/SQLModel/Jinja applicat
 |---|---|---|
 | Phase 0 | Added `DataScope`, SQL pagination, SQL aggregates, shared stale rules, JSON Position, deterministic seed/reseed, and recommendation benchmark. | Real CSV seed tests, repository tests, benchmark tests, CLI output, and JSON artifact. |
 | Phase 1 | Built login redirects, hybrid Opportunity delete (`CLOSED` when audited), and Director bulk assign. | HTTP tests cover auth, bulk logs, hard/soft delete, terminal stages, and dismissal. |
-| Phase 2 | Added dashboard metrics, EMA, team ranking, drill-down data, and management actions. | Aggregate tests cover zero denominators, completed months, workload, stale stages, and team order. |
+| Phase 2 | Added metrics, EMA, team ranking, and shared scoped Kanban for Manager overview and Director team drill-down. | Tests cover aggregates, team scope, four open stages, workload, and stale boundaries. |
 | Phase 3 | Added named application services for assignment, stage changes, reports, and offboarding, plus storage and logs. | Workflow tests cover rollback cleanup, one-log rule, scope, health degradation, and presigned access. |
 | Phase 4 | Integrated the selected recommender artifact, scoped candidates, Position-first ordering, score factors, top-3/top-5 UI, and deterministic fallback. | Recommendation tests cover no leakage, exact Recall/Precision metrics, no `@10`, fallback, and deterministic artifacts. |
 
@@ -26,7 +26,7 @@ Codex initially had to correct deterministic-score normalization so the baseline
 
 ## Final Check
 
-Final verification passed with `42` pytest cases and clean `mypy` on `src/app`. One FastAPI `TestClient` deprecation warning remains and does not affect behavior.
+Final verification passed with `43` pytest cases and clean `mypy` on `src/app`. One FastAPI `TestClient` deprecation warning remains and does not affect behavior.
 
 ## Report Documentation
 
