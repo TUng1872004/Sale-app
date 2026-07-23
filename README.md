@@ -133,13 +133,21 @@ Markdown report is generated.
 
 ## Assumptions and limitations
 
-- Closed opportunities retain their historical owner. Dismissal is blocked until agencies and
-  open opportunities have been reassigned (`REASSIGN_REQUIRED`).
-- Director ownership represents the HQ opportunity pool; Manager ownership represents a team
-  pool; only Saler-owned opportunities can change stage.
-- Every stage transition requires a Markdown report. If MinIO is unavailable, reporting actions
-  fail without changing SQL state; the rest of the CRM remains available.
-- Offline recommendation relevance is a same-sector/product winner proxy because the source
-  dataset has no counterfactual candidate labels. Coverage and team-local results are reported.
-- Alpine.js and Chart.js are loaded from a CDN in the demo UI. The recommendation engine itself
-  has no LLM or network dependency.
+- No full browser end-to-end records yet, only technical documentation.
+- No profile names are just meaningless string, cannot be clicked.
+- No duplicate-detection semantics at the domain layer. A Director can hard-delete an
+    open Opportunity without audit history; once history exists, deletion marks it
+    \texttt{CLOSED} instead, preserving evidence.
+- No automated bulk-reassignment on Sale offboarding.
+- Domain modeling reflects best-effort assumptions from an data and business
+    domain (sales operations), not exhaustive real-world coverage — by design, per
+    \S\ref{sec:assumptions}. Need more time to research and understand the domain, 
+    then adjust the model and rules accordingly.
+- No production-grade security, hardening, logging, or monitoring. All is in a demo state, 
+with the exception of the domain rules and permission checks which is about logic more than real infrastructure.
+- The binomial GLM is trained from historical CSV outcomes only. More live outcomes,
+    richer business features, and periodic retraining are needed before treating its ranking
+    as production-quality prediction.
+- AI can be used for autonomous sales management, but it is not implemented yet, since data with such short field body 
+make GenAI a trivial task. If there are more complex case with more data and more complex business rules, cheap AI integration can be 
+studied.
