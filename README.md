@@ -12,7 +12,7 @@ MinIO report workflows, tests, and benchmark-selected recommendation engine are 
 ## Dataset
 
 The dataset im using is: https://mavenanalytics.io/data-playground/crm-sales-opportunities
-A popular dataset for real sales data, already organized into 4 different schemas with only minor adjustment:
+A popular dataset for synthesis sales data, already organized into 4 different schemas with only minor adjustment:
 - Table accounts: represent account of customers
 - Table products: Products that companies sold
 - Table sales_pipeline: shows exactly the spirit of the objectives: a standard sale tracking table tracking employee, customers, stage and revenue
